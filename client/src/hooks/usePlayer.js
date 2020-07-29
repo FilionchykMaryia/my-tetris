@@ -8,8 +8,8 @@ import { STAGE_WIDTH, checkCollision } from '../gameHelpers';
 export const usePlayer = () => {
   const [player, setPlayer] = useState({
     pos: { x: 0, y: 0 },
-    //tetromino: TETROMINOS[0].shape,
-    tetromino: randomTetromino(),
+    tetromino: TETROMINOS[0].shape,
+    //tetromino: randomTetromino(),
     collided: false,
   });
   
@@ -63,7 +63,7 @@ export const usePlayer = () => {
       collided: false,
     });
     setFigure({
-      current: {...figure.next},
+      current: {...figure.next},//TODO проверить почему tetromino иногда как массив а иногда как объект
       next: randomTetromino(),
     });
   }, []);

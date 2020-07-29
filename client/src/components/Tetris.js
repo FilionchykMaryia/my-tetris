@@ -30,8 +30,8 @@ export const Tetris = () => {
   const [player, updatePlayerPos, resetPlayer, playerRotate, figure, setFigure] = usePlayer();
   const [stage, setStage, rowsCleared] = useStage(figure, player, resetPlayer);
   const [score, setScore, rows, setRows, level, setLevel] = useGameStatus(rowsCleared);
-  const [miniStage, setMiniStage] = useMiniStage(figure, resetPlayer);
- 
+  const [miniStage, setMiniStage, updateMiniStage] = useMiniStage(figure, resetPlayer);
+
 
   console.log(player);
   // console.log(tetroForDisplay);
@@ -57,7 +57,7 @@ export const Tetris = () => {
     setStage(createStage());
     setDropTime(1000);
     resetPlayer(figure);
-    setMiniStage();
+    setMiniStage(miniStage);
     setScore(0);
     setLevel(0);
     setRows(0);

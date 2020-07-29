@@ -38,7 +38,7 @@ export const useMiniStage = (figure, resetPlayer) => {
     resetPlayer,
   ]);
   // debugger;
-  return [miniStage, setMiniStage];
+  return [miniStage, setMiniStage, updateMiniStage];
   
 };
    

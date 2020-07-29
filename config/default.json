@@ -1,0 +1,5 @@
+{
+    "port": 5000,
+    "jwtSecret": "tetris mern",
+    "mongoUri": "mongodb+srv://Maryia:n12101966@cluster0.knxjf.mongodb.net/db_tetris?retryWrites=true&w=majority"
+}

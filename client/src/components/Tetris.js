@@ -3,13 +3,16 @@ import React, { useState, useEffect } from 'react';
 import { createStage, checkCollision } from '../gameHelpers';
 import { StyledTetrisWrapper, StyledTetris } from './styles/StyledTetris';
 import { randomTetromino } from './../tetrominos';
+import { AuthContext } from '../context/AuthContext';
+import {useMessage} from './../hooks/message.hook';
+import {useHttp} from './../hooks/http.hook';
 
 // Custom Hooks
 import { useInterval } from '../hooks/useInterval';
 import { usePlayer } from '../hooks/usePlayer';
 import { useStage } from '../hooks/useStage';
 import { useGameStatus } from '../hooks/useGameStatus';
-import { useMiniStage } from '../hooks/useMiniStage';
+// import { useMiniStage } from '../hooks/useMiniStage';
 
 
 // Components
@@ -17,23 +20,27 @@ import Stage from './Stage';
 import Display from './Display';
 import StartButton from './StartButton';
 import PauseButton from './PauseButton';
-import DisplayForNextTetro from './DisplayForNextTetro';
+// import DisplayForNextTetro from './DisplayForNextTetro';
 import Clock from './Clock';
+import SaveButton from './SaveButton';
+import { useAuth } from '../hooks/auth.hook';
 
 export const Tetris = () => {
+  
   const [dropTime, setDropTime] = useState(null);
   const [gameOver, setGameOver] = useState(false);
   const [isPlaying, setPlaying] = useState(false);
   
-  
-  
-  const [player, updatePlayerPos, resetPlayer, playerRotate, figure, setFigure] = usePlayer();
-  const [stage, setStage, rowsCleared] = useStage(figure, player, resetPlayer);
+  const message = useMessage();
+  const {request} = useHttp();
+  const { login, logout, token, userId } = useAuth();
+  const [player, updatePlayerPos, resetPlayer, playerRotate] = usePlayer();
+  const [stage, setStage, rowsCleared] = useStage(player, resetPlayer);
   const [score, setScore, rows, setRows, level, setLevel] = useGameStatus(rowsCleared);
-  const [miniStage, setMiniStage, updateMiniStage] = useMiniStage(figure, resetPlayer);
+  // const [miniStage, setMiniStage] = useMiniStage(figure, resetPlayer);
 
 
-  console.log(player);
+  // console.log(player);
   // console.log(tetroForDisplay);
   // console.log(miniStage);
 
@@ -56,8 +63,8 @@ export const Tetris = () => {
     // Reset everything
     setStage(createStage());
     setDropTime(1000);
-    resetPlayer(figure);
-    setMiniStage(miniStage);
+    resetPlayer();
+    // setMiniStage();
     setScore(0);
     setLevel(0);
     setRows(0);
@@ -108,9 +115,19 @@ export const Tetris = () => {
     drop();
   }, dropTime);
 
+  const saveScoreHandler = async () => {
+    console.log('нажата кнопка');
+    try{
+      console.log('send score=', score);
+      const data = await request('/api/game/savescore', 'POST', {score, userId});
+      console.log('data=', data);
+        message(data.message);
+        console.log('Data', data);
+    } catch(e){}
+  };
+
   const move = ({ keyCode }) => {
     if (!gameOver && isPlaying) {
-      debugger;
        if (keyCode === 37) {//LEFT
         movePlayer(-1);
       } else if (keyCode === 39) {//RIGHT
@@ -123,6 +140,8 @@ export const Tetris = () => {
         dropTime ? pause() : play();
       } else if (keyCode === 82) {//keyR
         startGame();
+      } else if (keyCode === 83) {//keyS
+        saveScoreHandler();
       }
     
     }
@@ -136,25 +155,22 @@ export const Tetris = () => {
       onKeyDown={e => move(e)}
       onKeyUp={keyUp}
     >
-      <StyledTetris nextPiece={figure.next} currentPiece={figure.current}>
+      <StyledTetris>
         <Stage stage={stage} />
         <aside>
-          {gameOver ? (
+
+          {gameOver && (
             <Display gameOver={gameOver} text="Game Over" />
-          ) : (
-            <div>
-              <Display text={`Score: ${score}`} />
-              <Display text={`Rows: ${rows}`} />
-              <Display text={`Level: ${level}`} />
-              <DisplayForNextTetro text={`Next: `} miniStage={miniStage} nextPiece={figure.next}/>
-              
-              
-            </div>
-          )}
+          )} 
           
+          <Display text={`Score: ${score}`} />
+          <Display text={`Rows: ${rows}`} />
+          <Display text={`Level: ${level}`} />
+   
+          <SaveButton callback={saveScoreHandler}/> 
           <StartButton callback={startGame} />
           {isPlaying ? (
-                <PauseButton callback={dropTime ? pause : play} text={dropTime ? 'Pause (P)' : 'Play (P)'}/>
+            <PauseButton callback={dropTime ? pause : play} text={dropTime ? 'Pause (P)' : 'Play (P)'}/>
               ) : null}
           <Clock />
          
@@ -165,4 +181,4 @@ export const Tetris = () => {
 };
 
 export default Tetris;
-//
+//<DisplayForNextTetro text={`Next: `} miniStage={miniStage} nextPiece={figure.next}/>

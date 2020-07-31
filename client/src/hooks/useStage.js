@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { createStage } from '../gameHelpers';
 
-export const useStage = (figure, player, resetPlayer) => {
+export const useStage = (player, resetPlayer) => {
   const [stage, setStage] = useState(createStage());
   const [rowsCleared, setRowsCleared] = useState(0);
 
@@ -23,10 +23,10 @@ export const useStage = (figure, player, resetPlayer) => {
       const newStage = prevStage.map(row =>
         row.map(cell => (cell[1] === 'clear' ? [0, 'clear'] : cell))
       );
-
+  
       // Then draw the tetromino
-      player.tetromino.forEach((row, y) => {
-        row.forEach((value, x) => {
+      player.tetromino.map((row, y) => {
+        row.map((value, x) => {
           if (value !== 0) {
             newStage[y + player.pos.y][x + player.pos.x] = [
               value,
@@ -37,7 +37,7 @@ export const useStage = (figure, player, resetPlayer) => {
       });
       // Then check if we got some score if collided
       if (player.collided) {
-        resetPlayer(figure);
+        resetPlayer();
         return sweepRows(newStage);
       }
       return newStage;

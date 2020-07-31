@@ -20,7 +20,7 @@ export const StyledNavbar = styled.div`
     padding: 5px 30px;
 `;
 
-export const Logo = styled.a`
+export const Logo = styled.span`
     color: white;
     font-size: 2rem;
 `;

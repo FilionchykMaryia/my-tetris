@@ -12,13 +12,7 @@ export const usePlayer = () => {
     //tetromino: randomTetromino(),
     collided: false,
   });
-  
-  const [figure, setFigure] = useState({
-    next: randomTetromino(),
-    current: player.tetromino,
-  });
  
-  console.log(figure);
 
   function rotate(matrix, dir) {
     // Make the rows to become cols (transpose)
@@ -56,17 +50,13 @@ export const usePlayer = () => {
 
  
 
-  const resetPlayer = useCallback((figure) => {
+  const resetPlayer = useCallback(() => {
     setPlayer({
       pos: { x: STAGE_WIDTH / 2 - 2, y: 0 },
-      tetromino: {...figure.current},
+      tetromino: randomTetromino(),
       collided: false,
-    });
-    setFigure({
-      current: {...figure.next},//TODO проверить почему tetromino иногда как массив а иногда как объект
-      next: randomTetromino(),
-    });
+    })
   }, []);
 
-  return [player, updatePlayerPos, resetPlayer, playerRotate, figure, setFigure];
+  return [player, updatePlayerPos, resetPlayer, playerRotate];
 };

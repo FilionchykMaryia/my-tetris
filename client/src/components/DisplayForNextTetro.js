@@ -1,10 +1,8 @@
 import React from 'react';
 import { StyledDisplay } from './styles/StyledDisplay';
-
-import Stage  from './Stage';
 import styled from 'styled-components';
 import { TETROMINOS } from '../tetrominos';
-import { nextPiece } from './../components/Tetris';
+
 
 import Cell from './Cell';
 
@@ -24,16 +22,16 @@ export const StyledMiniStage = styled.div`
 
 
 
-const StageForDisplay = ({ miniStage, nextPiece }) => (
+const StageForDisplay = ({ miniStage }) => (
     <StyledMiniStage width={miniStage[0].length} height={miniStage.length} >
       {miniStage.map(row => row.map((cell, x) => <Cell key={x} type={cell[0]}/>))}
     </StyledMiniStage>
   );
 
-const DisplayForNextTetro = ({text, miniStage, nextPiece}) => (
+const DisplayForNextTetro = ({figure, text, miniStage}) => (
     <StyledDisplay text={text} style={{paddingBottom: "20px"}}>
         <div >{text}</div>
-        <StageForDisplay miniStage={miniStage} nextPiece={nextPiece}></StageForDisplay>
+        <StageForDisplay miniStage={miniStage} next={figure.next}></StageForDisplay>
 
     </StyledDisplay>
 );

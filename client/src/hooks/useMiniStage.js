@@ -1,44 +1,29 @@
-import { useState, useEffect } from 'react';
-import { createMiniStage } from '../gameHelpers';
-import { TETROMINOS, randomTetromino} from '../tetrominos';
+// import { useState, useEffect } from 'react';
+// import { createMiniStage } from '../gameHelpers';
+// import { TETROMINOS, randomTetromino} from '../tetrominos';
 
 
 
-export const useMiniStage = (figure, resetPlayer) => {
+// export const useMiniStage = (figure, resetPlayer) => {
   
-  const [miniStage, setMiniStage] = useState(createMiniStage());
+//   const [miniStage, setMiniStage] = useState(createMiniStage());
   
+//   setMiniStage(
+//     useEffect(({...figure}) => {
+//       // Then draw the tetromino
+//       figure.next.forEach((row, y) => {
+//         row.forEach((value, x) => {
+//           if (value !== 0) {
+//             miniStage[y][x] = value;
+//           };
+//         });
+//       });
   
-  useEffect(() => {
-
-    const updateMiniStage = ({...figure}) => {
-      
-    
-      
-      // Then draw the tetromino
-      figure.next.forEach((row, y) => {
-        row.forEach((value, x) => {
-          if (value !== 0) {
-            miniStage[y][x] = value;
-          };
-        });
-      });
-      return miniStage;
-      
-    };
+//     // Here are the updates
   
-    
-    // Here are the updates
-    
-    setMiniStage(updateMiniStage(figure)); 
-    
-  }, [
-    // player.collided,
-    // player.tetromino,
-    resetPlayer,
-  ]);
-  // debugger;
-  return [miniStage, setMiniStage, updateMiniStage];
+//     }, [resetPlayer])
+//   );
   
-};
+//   return [miniStage, setMiniStage];
+// };
    

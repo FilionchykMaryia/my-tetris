@@ -6,6 +6,7 @@ const schema = new Schema({
     name: {type: String, required: true, unique: true},    
     currScore: {type: Number},
     maxScore: {type: Number},
+    currLevel: {type: Number},
 });
 
 module.exports = model('User', schema);

@@ -84,8 +84,8 @@ router.post(
             config.get('jwtSecret'),
             { expiresIn: '1h' },
         );
-
-        res.json({ token, userId: user.id });
+        
+        res.json({ token, userId: user.id, score: user.currScore, level: user.currLevel });
         
         
     } catch (e){

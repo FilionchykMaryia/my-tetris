@@ -15,6 +15,7 @@ import {
 import {useHttp} from './../hooks/http.hook';
 import {useMessage} from './../hooks/message.hook';
 import { AuthContext } from '../context/AuthContext';
+import {useGameStatus} from '../hooks/useGameStatus';
 
 export const AuthPage = () => {
     const auth = useContext(AuthContext);
@@ -25,6 +26,7 @@ export const AuthPage = () => {
         password: '',
         name: '',
     });
+    
 
     useEffect(() => {
       console.log('Error', error);
@@ -41,17 +43,19 @@ export const AuthPage = () => {
         try{ 
             const data = await request('/api/auth/register', 'POST', {...form});
             message(data.message);
-            console.log('Data', data);
+            console.log('Data.registerHandler', data);
         } catch(e){}
     };
-
+//Авторизация и заполнение сохраненного игрового счета
     const loginHandler = async () => {
       try{
-          const data = await request('/api/auth/login', 'POST', {...form});
-          auth.login(data.token, data.userId);
-          console.log('Data', data);
+      const data = await request('/api/auth/login', 'POST', {...form});
+      console.log('Data loginhabdler', data);
+      auth.login(data.token, data.userId, data.score, data.level);
+      
+       //return data;
       } catch(e){}
-  }
+    };
 
 
 

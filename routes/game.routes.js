@@ -10,16 +10,16 @@ router.post(
        // console.log('routesavescore',router);
         try {
             
-            const {score, userId} = req.body;
+            const {score, userId, level} = req.body;
             //console.log('req',  req);
             console.log('Body',  req.body);
             const user = await User.findById(userId);
             console.log('userID=',  userId);
             if(user.maxScore < score){
-                await User.findByIdAndUpdate(userId, {currScore: score, maxScore: score});
+                await User.findByIdAndUpdate(userId, {currScore: score, maxScore: score, currLevel: level});
                 // user.maxScore = score;
             } else {
-                await User.findByIdAndUpdate(userId, {maxScore: score});
+                await User.findByIdAndUpdate(userId, {currScore: score, currLevel:level});
             };
             res.status(201).json({ message: 'Результат игры успешно сохранен'});
             

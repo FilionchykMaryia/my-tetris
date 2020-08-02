@@ -1,11 +1,16 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useContext } from 'react';
+import {useAuth} from './auth.hook';
 
-export const useGameStatus = rowsCleared => {
-  const [score, setScore] = useState(0);
+export const useGameStatus = (rowsCleared) => {
+  const { login, logout, token, userId, currScore, currLevel } = useAuth();
+  const [score, setScore] = useState(currScore);
   const [rows, setRows] = useState(0);
-  const [level, setLevel] = useState(0);
+  const [level, setLevel] = useState(currLevel);
 
-  const linePoints = [40, 100, 300, 1200];
+
+
+  const linePoints = [40, 100, 300, 1200]; 
+  console.log(currScore, currLevel);
 
   const calcScore = useCallback(() => {
     // We have score
@@ -16,9 +21,17 @@ export const useGameStatus = rowsCleared => {
     }
   }, [level, linePoints, rowsCleared]);
 
+
+
   useEffect(() => {
     calcScore();
   }, [calcScore, rowsCleared, score]);
+
+  useEffect(() => {
+    
+    setScore(currScore);
+    setLevel(currLevel);
+  }, [login]);
 
   return [score, setScore, rows, setRows, level, setLevel];
 };

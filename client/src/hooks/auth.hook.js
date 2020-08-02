@@ -6,14 +6,21 @@ const storageName = 'userData';
 export const useAuth = () => {
     const [token, setToken] = useState(null);
     const [userId, setUserid] = useState(null);
+    const [currScore, setCurrScore] = useState(0);
+    const [currLevel, setCurrLevel] = useState(0);
 
-    const login = useCallback((jwtToken, id) => {
+    const login = useCallback((jwtToken, id, currScore, currLevel) => {
+        console.log('(login) id,score,level=', id+", "+currScore+", "+currLevel);
         setToken(jwtToken);
         setUserid(id);
-
+        setCurrScore(currScore);
+        setCurrLevel(currLevel);
+        console.log('login.currScore' , currScore);
         localStorage.setItem(storageName, JSON.stringify({
             userId: id,
-            token: jwtToken
+            token: jwtToken,
+            currScore: currScore,
+            currLevel: currLevel
         }));
     }, []);
 
@@ -25,11 +32,11 @@ export const useAuth = () => {
 
     useEffect(() => {
         const data = JSON.parse(localStorage.getItem(storageName));
-
+        console.log('useEffect-login',data);
         if(data && data.token) {
-            login(data.token, data.userId);
+            login(data.token, data.userId, data.currScore, data.currLevel);
         }
     }, [login]);
 
-    return { login, logout, token, userId }
+    return { login, logout, token, userId, currScore, currLevel }
 }

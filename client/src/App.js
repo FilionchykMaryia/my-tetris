@@ -7,12 +7,12 @@ import { AuthContext } from './context/AuthContext';
 import 'materialize-css';
 
 const App = () => {
-  const {token, login, logout, userId} = useAuth();
+  const { login, logout, token, userId, currScore, currLevel} = useAuth();
   const isAuthenticated = !!token;
   const routes = useRoutes(isAuthenticated);
   return(
     <AuthContext.Provider value={{
-      token, login, logout, userId, isAuthenticated
+      token, login, logout, userId, isAuthenticated, currScore, currLevel
     }}>
       <Router>
       

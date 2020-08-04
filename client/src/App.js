@@ -5,14 +5,16 @@ import {useAuth} from './hooks/auth.hook';
 import {Navbar} from './components/Navbar';
 import { AuthContext } from './context/AuthContext';
 import 'materialize-css';
+import {useGameStatus} from './hooks/useGameStatus';
 
 const App = () => {
-  const { login, logout, token, userId, currScore, currLevel} = useAuth();
+  const {token, login, logout, userId} = useAuth();
+  const [score, level] = useGameStatus(); 
   const isAuthenticated = !!token;
   const routes = useRoutes(isAuthenticated);
   return(
     <AuthContext.Provider value={{
-      token, login, logout, userId, isAuthenticated, currScore, currLevel
+      token, userId, score,level, login, logout,  isAuthenticated
     }}>
       <Router>
       

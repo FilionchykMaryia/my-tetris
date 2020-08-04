@@ -6,7 +6,7 @@ export const StyledButton = styled.button`
   padding: 15px;
   min-height: 15px;
   min-width: 30px;
-  width: 85%;
+  width: auto;
   border: none;
   color: white;
   background: rgba(30, 58, 142, 0.8);

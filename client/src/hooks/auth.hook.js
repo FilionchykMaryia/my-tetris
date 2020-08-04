@@ -1,28 +1,25 @@
 import { useState, useCallback, useEffect } from 'react';
 
 
+
 const storageName = 'userData';
 
 export const useAuth = () => {
     const [token, setToken] = useState(null);
     const [userId, setUserid] = useState(null);
-    const [currScore, setCurrScore] = useState(0);
-    const [currLevel, setCurrLevel] = useState(0);
+   // const [score, setScore, level, setLevel] = useGameStatus();
 
-    const login = useCallback((jwtToken, id, currScore, currLevel) => {
-        console.log('(login) id,score,level=', id+", "+currScore+", "+currLevel);
+    const login =(jwtToken, id, score, level) => {
         setToken(jwtToken);
         setUserid(id);
-        setCurrScore(currScore);
-        setCurrLevel(currLevel);
-        console.log('login.currScore' , currScore);
+        
         localStorage.setItem(storageName, JSON.stringify({
             userId: id,
             token: jwtToken,
-            currScore: currScore,
-            currLevel: currLevel
+            score: score,
+            level: level
         }));
-    }, []);
+    };
 
     const logout = useCallback(() => {
         setToken(null);
@@ -32,11 +29,14 @@ export const useAuth = () => {
 
     useEffect(() => {
         const data = JSON.parse(localStorage.getItem(storageName));
-        console.log('useEffect-login',data);
+//console.log('data from UseEffect login',data);
         if(data && data.token) {
-            login(data.token, data.userId, data.currScore, data.currLevel);
+            login(data.token, data.userId,data.score, data.level);
         }
     }, [login]);
 
-    return { login, logout, token, userId, currScore, currLevel }
+    
+ 
+
+    return { login, logout, token, userId }
 }

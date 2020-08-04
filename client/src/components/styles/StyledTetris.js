@@ -22,8 +22,8 @@ export const StyledTetris = styled.div`
   min-width: 400px;
 
   aside {
-    width: 85%;
-    height: 20%;
+    width: 55%;
+    height: 10%;
     max-width: 200px;
     /* min-width: 50px;
     min-height: 100px; */
@@ -31,6 +31,9 @@ export const StyledTetris = styled.div`
     min-height: 15px;
     min-width: 30px;
     display: block;
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 auto;
     /* padding: 0 20px; */
   }
 `;

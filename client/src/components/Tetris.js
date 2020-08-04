@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 
 import { createStage, checkCollision } from '../gameHelpers';
 import { StyledTetrisWrapper, StyledTetris } from './styles/StyledTetris';
@@ -25,13 +25,13 @@ import Clock from './Clock';
 import SaveButton from './SaveButton';
 import { useAuth } from '../hooks/auth.hook';
 
-
 export const Tetris = () => {
   
   const [dropTime, setDropTime] = useState(null);
   const [gameOver, setGameOver] = useState(false);
   const [isPlaying, setPlaying] = useState(false);
-
+  
+  const auth = useContext(AuthContext);
   const message = useMessage();
   const {request} = useHttp();
   
@@ -40,7 +40,7 @@ export const Tetris = () => {
   const [score, setScore, rows, setRows, level, setLevel] = useGameStatus(rowsCleared);
   const { login, logout, token, userId } = useAuth();
   // const [miniStage, setMiniStage] = useMiniStage(figure, resetPlayer);
-console.log('tetris-userId',userId);
+console.log('from Tetris Score=',score);
 
   // console.log(player);
   // console.log(tetroForDisplay);
@@ -117,15 +117,17 @@ console.log('tetris-userId',userId);
     drop();
   }, dropTime);
 
-  //Отправляем текущий счет и уровень в базу на сервере
   const saveScoreHandler = async () => {
-    console.log('нажата кнопка');
+    
     try{
       console.log('send score=', score);
-      const data = await request('/api/game/savescore', 'POST', {score, userId, level});
-      console.log('data=', data);
+      const data = await request('/api/game/savescore', 'POST', {userId: userId, currScore: score, currLevel: level}, {
+        Authorisation: `Bearer ${auth.token}`
+      });
+     // auth.savescore();
+      console.log('SAVE request=', data);
         message(data.message);
-        console.log('Data', data);
+       
     } catch(e){}
   };
 

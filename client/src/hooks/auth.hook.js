@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect } from 'react';
-
+import { useGameStatus } from './useGameStatus';
 
 
 const storageName = 'userData';
@@ -7,7 +7,7 @@ const storageName = 'userData';
 export const useAuth = () => {
     const [token, setToken] = useState(null);
     const [userId, setUserid] = useState(null);
-   // const [score, setScore, level, setLevel] = useGameStatus();
+  // const [score, setScore, rows, setRows, level, setLevel, restorescore] = useGameStatus();
 
     const login =(jwtToken, id, score, level) => {
         setToken(jwtToken);
@@ -29,9 +29,10 @@ export const useAuth = () => {
 
     useEffect(() => {
         const data = JSON.parse(localStorage.getItem(storageName));
-//console.log('data from UseEffect login',data);
+console.log('data from UseEffect login',data);
         if(data && data.token) {
             login(data.token, data.userId,data.score, data.level);
+           // restorescore(data.score, data.level);
         }
     }, [login]);
 

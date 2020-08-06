@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext, useLayoutEffect } from 'react';
 
 import { createStage, checkCollision } from '../gameHelpers';
 import { StyledTetrisWrapper, StyledTetris } from './styles/StyledTetris';
@@ -26,7 +26,7 @@ import SaveButton from './SaveButton';
 import { useAuth } from '../hooks/auth.hook';
 
 export const Tetris = () => {
-  
+  const storageName = 'userData';
   const [dropTime, setDropTime] = useState(null);
   const [gameOver, setGameOver] = useState(false);
   const [isPlaying, setPlaying] = useState(false);
@@ -37,14 +37,19 @@ export const Tetris = () => {
   
   const [player, updatePlayerPos, resetPlayer, playerRotate] = usePlayer();
   const [stage, setStage, rowsCleared] = useStage(player, resetPlayer);
-  const [score, setScore, rows, setRows, level, setLevel] = useGameStatus(rowsCleared);
+  const [score, setScore, rows, setRows, level, setLevel,restorescore] = useGameStatus(rowsCleared);
   const { login, logout, token, userId } = useAuth();
   // const [miniStage, setMiniStage] = useMiniStage(figure, resetPlayer);
 console.log('from Tetris Score=',score);
-
   // console.log(player);
   // console.log(tetroForDisplay);
   // console.log(miniStage);
+  const restoreScoreFromStorage = () => {
+    const data = JSON.parse(localStorage.getItem(storageName));
+    console.log('restoreScoreFromStorage',data);
+        if(data && data.token) {
+     restorescore(data.score, data.level);
+  }};
 
   const movePlayer = dir => {
     if (!checkCollision(player, stage, { x: dir, y: 0 })) {
@@ -67,11 +72,13 @@ console.log('from Tetris Score=',score);
     setDropTime(1000);
     resetPlayer();
     // setMiniStage();
-    setScore(0);
-    setLevel(0);
+    setScore(score);
+    setLevel(level);
+    
     setRows(0);
     setGameOver(false);
     setPlaying(true);
+ 
     
     
   };
@@ -118,12 +125,18 @@ console.log('from Tetris Score=',score);
   }, dropTime);
 
   const saveScoreHandler = async () => {
-    
     try{
       console.log('send score=', score);
-      const data = await request('/api/game/savescore', 'POST', {userId: userId, currScore: score, currLevel: level}, {
+      const data = await request('/api/game/savescore', 'POST', {userId: userId, score: score, level: level}, {
         Authorisation: `Bearer ${auth.token}`
       });
+      //save to storage
+      localStorage.setItem(storageName, JSON.stringify({
+        userId: userId,
+        token: auth.token,
+        score: score,
+        level: level
+    }));
      // auth.savescore();
       console.log('SAVE request=', data);
         message(data.message);
@@ -146,17 +159,19 @@ console.log('from Tetris Score=',score);
       } else if (keyCode === 82) {//keyR
         startGame();
       } else if (keyCode === 83) {//keyS
-        saveScoreHandler();
+        saveScoreHandler(score, level);
       }
     
     }
   };
-
-  
+  useEffect(() => {
+    restoreScoreFromStorage();
+    
+}, [userId]);
 
   return (
     <StyledTetrisWrapper
-     
+   
       onKeyDown={e => move(e)}
       onKeyUp={keyUp}
     >

@@ -11,20 +11,35 @@ router.post(
        // console.log('routesavescore',router);
         try {
             
-            const {score, level,userId} = req.body;
+            const { userId, score, level } = req.body;
             console.log('UserId=',  userId);
+            console.log('score=',  score);
             if(!userId)  res.status(500).json({ message: 'Не удалось определить UserID' });
             //console.log('req',  req);
             console.log('Body',  req.body);
             const user = await User.findById(userId);
             
+                if(user.maxScore < score){
+                    await User.findByIdAndUpdate(userId, {currScore: score, maxScore: score, currLevel: level},);
+                   
+                } else {
+                    await User.findByIdAndUpdate(userId, {currScore: score, currLevel: level});
+                };
+            
 
-            if(user.maxScore < score){
-                await User.findByIdAndUpdate(userId, {currScore: score, maxScore: score, currLevel: level},);
-               
-            } else {
-                await User.findByIdAndUpdate(userId, {currScore: score, currLevel: level});
-            };
+            // if(score && level) {
+            //     if (score){
+            //         if(user.maxScore < score){
+            //             await User.findByIdAndUpdate(userId, {currScore: score, maxScore: score});
+            //         } else {
+            //             await User.findByIdAndUpdate(userId, {currScore: score});
+            //         }; 
+            //      };
+            //     if (level) {
+            //          await User.findByIdAndUpdate(userId, {currLevel: level});
+            //     }; 
+            // } else return;
+            
 
             // const token = jwt.sign(
             //     { userId: user.id },
@@ -32,9 +47,7 @@ router.post(
             //     { expiresIn: '1h' },
             // );
     
-           res.json({ userId: user.id, currScore: user.currScore, currLevel: user.currLevel });
-
-
+            res.json({ userId: user.id, currScore: user.currScore, currLevel: user.currLevel });
             res.status(201).json({ message: 'Результат игры успешно сохранен'});
             
         } catch(e){

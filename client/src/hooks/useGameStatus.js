@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 
-export const useGameStatus = rowsCleared => {
+export const useGameStatus = (rowsCleared, login) => {
  
   const [score, setScore] = useState(0);
   const [rows, setRows] = useState(0);
@@ -8,8 +8,6 @@ export const useGameStatus = rowsCleared => {
 
   const linePoints = [40, 100, 300, 1200];
   const storageName = 'userData';
- 
-
  
   const calcScore = useCallback(() => {
     // We have score
@@ -20,24 +18,25 @@ export const useGameStatus = rowsCleared => {
     }
   }, [level, linePoints, rowsCleared]);
 
-  const restorescore = (score, level) => {
-    setScore(score);
-    setLevel(level);
-    console.log('restoreScore in useAuth',score);
-    //TODO почему не обновляется счетчик из хука SetScore
-};
-
   useEffect(() => {
     if(rowsCleared) calcScore();
   }, [calcScore, rowsCleared, score]);
 
-  useEffect(()=>{
-    const data = JSON.parse(localStorage.getItem(storageName));
-    console.log('gameStatus UseEffect',data);
-    if(data && data.token) {
-      restorescore(data.score, data.level);
-  }
-  
-},[])
+  const restorescore = (score, level) => {
+    if(score)    setScore(score);
+    if (level) setLevel(level);
+    console.log('restoreScore in useAuth',score, level);
+    //TODO почему не обновляется счетчик из хука SetScore
+  };
+ 
+
+  // useEffect(()=>{
+  //   const data = JSON.parse(localStorage.getItem(storageName));
+  //   console.log('gameStatus UseEffect',data);
+  //   if(data && data.token) {
+  //     restorescore(data.score, data.level);
+  //   }
+  // },[login]);
+
   return [score, setScore, rows, setRows, level, setLevel, restorescore];
 };

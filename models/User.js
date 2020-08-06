@@ -4,9 +4,9 @@ const schema = new Schema({
     email: {type: String, required: true, unique: true},
     password: {type: String, required: true},
     name: {type: String, required: true, unique: true},    
-    currScore: {type: Number},
-    maxScore: {type: Number},
-    currLevel: {type: Number},
+    currScore: {type: Number, default: 0},
+    maxScore: {type: Number, default: 0},
+    currLevel: {type: Number, default: 0},
 });
 
 module.exports = model('User', schema);

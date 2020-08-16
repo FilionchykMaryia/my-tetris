@@ -19,8 +19,8 @@ import {StyledButton} from './styles/StyledButton';
 //   cursor: pointer;
 // `;
 
-const StartButton = ({ callback }) => (
-  <StyledButton onClick={callback}>Start Game (R)</StyledButton>
+const Button = ({ callback, text }) => (
+<StyledButton onClick={callback}>{text}</StyledButton>
 );
 
-export default StartButton;
+export default Button;

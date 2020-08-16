@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext, useLayoutEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 
 import { createStage, checkCollision } from '../gameHelpers';
 import { StyledTetrisWrapper, StyledTetris } from './styles/StyledTetris';
@@ -12,44 +12,40 @@ import { useInterval } from '../hooks/useInterval';
 import { usePlayer } from '../hooks/usePlayer';
 import { useStage } from '../hooks/useStage';
 import { useGameStatus } from '../hooks/useGameStatus';
-// import { useMiniStage } from '../hooks/useMiniStage';
+import { useAuth } from '../hooks/auth.hook';
+import { useMiniStage } from '../hooks/useMiniStage';
 
 
 // Components
 import Stage from './Stage';
 import Display from './Display';
-import StartButton from './StartButton';
-import PauseButton from './PauseButton';
-// import DisplayForNextTetro from './DisplayForNextTetro';
+import Button from './Button';
+import DisplayForNextTetro from './DisplayForNextTetro';
 import Clock from './Clock';
-import SaveButton from './SaveButton';
-import { useAuth } from '../hooks/auth.hook';
+import ModalWindow from './ModalWindow';
+import { createMiniStage } from '../gameHelpers';
 
 export const Tetris = () => {
   const storageName = 'userData';
   const [dropTime, setDropTime] = useState(null);
   const [gameOver, setGameOver] = useState(false);
   const [isPlaying, setPlaying] = useState(false);
+  const [active, setActive] = useState(true);
   
   const auth = useContext(AuthContext);
   const message = useMessage();
   const {request} = useHttp();
-  
+  debugger;
   const [player, updatePlayerPos, resetPlayer, playerRotate] = usePlayer();
   const [stage, setStage, rowsCleared] = useStage(player, resetPlayer);
-  const [score, setScore, rows, setRows, level, setLevel,restorescore] = useGameStatus(rowsCleared);
+  const [score, setScore, rows, setRows, level, setLevel, restorescore] = useGameStatus(rowsCleared);
   const { login, logout, token, userId } = useAuth();
-  // const [miniStage, setMiniStage] = useMiniStage(figure, resetPlayer);
-console.log('from Tetris Score=',score);
-  // console.log(player);
+
+  const [miniStage, setMiniStage] = useMiniStage(player, resetPlayer);
+console.log('from Tetris Score=', score);
+ console.log('from Tetris miniStage=', miniStage);
   // console.log(tetroForDisplay);
   // console.log(miniStage);
-  const restoreScoreFromStorage = () => {
-    const data = JSON.parse(localStorage.getItem(storageName));
-    console.log('restoreScoreFromStorage',data);
-        if(data && data.token) {
-     restorescore(data.score, data.level);
-  }};
 
   const movePlayer = dir => {
     if (!checkCollision(player, stage, { x: dir, y: 0 })) {
@@ -71,17 +67,26 @@ console.log('from Tetris Score=',score);
     setStage(createStage());
     setDropTime(1000);
     resetPlayer();
-    // setMiniStage();
-    setScore(score);
-    setLevel(level);
-    
+   // setMiniStage();
+    setScore(0);
     setRows(0);
+    setLevel(0);
     setGameOver(false);
     setPlaying(true);
- 
-    
-    
   };
+
+  const continuePrevGame = () => {
+    setStage(createStage());
+    setDropTime(1000);
+    resetPlayer();
+  //  setMiniStage();
+    setScore(score);
+    setRows(rows);
+    setLevel(level);
+    setGameOver(false);
+    setPlaying(true);
+  };
+
    const pause = () => {
      setDropTime(null);
    };
@@ -106,6 +111,7 @@ console.log('from Tetris Score=',score);
         console.log('GAME OVER!!!');
         setGameOver(true);
         setDropTime(null);
+        setActive(false);
       }
       updatePlayerPos({ x: 0, y: 0, collided: true });
     }
@@ -124,26 +130,6 @@ console.log('from Tetris Score=',score);
     drop();
   }, dropTime);
 
-  const saveScoreHandler = async () => {
-    try{
-      console.log('send score=', score);
-      const data = await request('/api/game/savescore', 'POST', {userId: userId, score: score, level: level}, {
-        Authorisation: `Bearer ${auth.token}`
-      });
-      //save to storage
-      localStorage.setItem(storageName, JSON.stringify({
-        userId: userId,
-        token: auth.token,
-        score: score,
-        level: level
-    }));
-     // auth.savescore();
-      console.log('SAVE request=', data);
-        message(data.message);
-       
-    } catch(e){}
-  };
-
   const move = ({ keyCode }) => {
     if (!gameOver && isPlaying) {
        if (keyCode === 37) {//LEFT
@@ -154,51 +140,114 @@ console.log('from Tetris Score=',score);
         dropPlayer();
       } else if (keyCode === 38) {//UP
         playerRotate(stage, 1);
+      } else if (keyCode === 67) {//keyC
+        continuePrevGame();
       } else if (keyCode === 80) {//keyP
         dropTime ? pause() : play();
       } else if (keyCode === 82) {//keyR
         startGame();
       } else if (keyCode === 83) {//keyS
-        saveScoreHandler(score, level);
+        saveScoreHandler(score, rows, level);
       }
-    
     }
   };
+
+  const restoreScoreFromStorage = () => {
+    const data = JSON.parse(localStorage.getItem(storageName));
+    console.log('restoreScoreFromStorage',data);
+        if(data && data.token) {
+     restorescore(data.score, data.rows, data.level);
+  }};
+
   useEffect(() => {
     restoreScoreFromStorage();
-    
-}, [userId]);
+  }, [userId]);
+
+  const saveScoreHandler = async () => {
+    try{
+      console.log('send score=', score);
+      const data = await request('/api/game/savescore', 'POST', {
+        userId: userId,
+        score: score,
+        rows: rows, 
+        level: level
+      }, {Authorisation: `Bearer ${auth.token}`});
+      //save to storage
+      localStorage.setItem(storageName, JSON.stringify({
+        userId: userId,
+        token: auth.token,
+        score: score,
+        rows: rows,
+        level: level
+    }));
+      console.log('SAVE request=', data);
+        message(data.message);
+       
+    } catch(e){}
+  };
+
+  const saveLocalStatusGame = () => {
+    localStorage.setItem(storageName, JSON.stringify({
+      userId: userId,
+      token: auth.token,
+      score: score,
+      rows: rows,
+      level: level
+    }));
+  };
+
+  const handleClickPauseButton = (e) => {
+    const callback = dropTime ? pause : play;
+    callback(e);
+    saveLocalStatusGame(e);
+  };
 
   return (
     <StyledTetrisWrapper
-   
       onKeyDown={e => move(e)}
       onKeyUp={keyUp}
     >
-      <StyledTetris>
+        <StyledTetris>
+        {(gameOver && !active) && (
+
+  <div className="overlay" onClick={(e) => setActive(true)} >
+    <ModalWindow  gameOver={gameOver} 
+                  title="Game Over" 
+                  text="Start a new game!" 
+                  style={active ? {display: 'none'} : {display: 'flex'}}/>
+  </div> 
+)}
         <Stage stage={stage} />
         <aside>
-
-          {gameOver && (
-            <Display gameOver={gameOver} text="Game Over" />
-          )} 
-          
           <Display text={`Score: ${score}`} />
           <Display text={`Rows: ${rows}`} />
           <Display text={`Level: ${level}`} />
-   
-          <SaveButton callback={saveScoreHandler}/> 
-          <StartButton callback={startGame} />
-          {isPlaying ? (
-            <PauseButton callback={dropTime ? pause : play} text={dropTime ? 'Pause (P)' : 'Play (P)'}/>
-              ) : null}
           <Clock />
-         
+          <Button callback={startGame} text={'New Game (R)'}/>
+
+          {!gameOver && (
+            <>
+              <Button callback={continuePrevGame} text={'Continue (C)'}/>
+              <Button callback={saveScoreHandler} text={'Save (S)'}/> 
+
+              {isPlaying ? (
+                <Button callback={handleClickPauseButton} text={dropTime ? 'Pause (P)' : 'Play (P)'} />
+              ) : null}
+              
+              <DisplayForNextTetro  text='NEXT' miniStage={createMiniStage()} player={player}> </DisplayForNextTetro>
+            </>
+              
+            )}
+          
         </aside>
-      </StyledTetris>
+      </StyledTetris> 
+  
     </StyledTetrisWrapper>
   );
 };
 
 export default Tetris;
 //<DisplayForNextTetro text={`Next: `} miniStage={miniStage} nextPiece={figure.next}/>
+// 
+
+//       : (

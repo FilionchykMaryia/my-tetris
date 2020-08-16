@@ -16,7 +16,7 @@ export const StyledAuthPage = styled.div`
     
 `;
 
-export const AuthWrapper = styled.div`
+export const Wrapper = styled.div`
     background: rgba(0,5,23,0.6);
     color: white;
     padding: 60px;
@@ -42,13 +42,29 @@ export const Card = styled.div`
     display: flex;
     flex-direction: column;
     justify-content: center;
-   
+    align-items: center;
+`;
+
+export const CardAction = styled.div`
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    /* margin: 10px 0; */
+    /* padding: 10px; */
+    width: 70%;
 `;
 
 export const CardContent = styled.div`
+    width: 100%;
+    
     .div {
         margin: 20px;
+        display: flex;
+        width: 100%;
+        
+        
     }
+    
 `;
 
 export const CardTitle = styled.span`
@@ -59,7 +75,7 @@ export const InputField = styled.div`
     display: flex;
     flex-direction: column;
     justify-content: center;
-    margin: 10px;
+    margin: 10px 0;
     padding: 10px;
 `;
 
@@ -69,6 +85,7 @@ export const Input = styled.input`
     border: none;
     outline: none;
     color: white;
+    width: 100%;
 
     :focus{
         border-bottom: 2px solid white;
@@ -82,11 +99,4 @@ export const Label = styled.label`
   font-size: 12px;
 `;
 
-export const CardAction = styled.div`
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    margin: 10px;
-    padding: 10px;
-`;
 

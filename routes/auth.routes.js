@@ -85,7 +85,7 @@ router.post(
             { expiresIn: '1h' },
         );
 
-        res.json({ token, userId: user.id, currScore: user.currScore, currLevel: user.currLevel});
+        res.json({ token, userId: user.id, currScore: user.currScore, currRows: user.currRows, currLevel: user.currLevel});
         
         
     } catch (e){

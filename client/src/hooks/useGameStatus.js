@@ -22,10 +22,12 @@ export const useGameStatus = (rowsCleared, login) => {
     if(rowsCleared) calcScore();
   }, [calcScore, rowsCleared, score]);
 
-  const restorescore = (score, level) => {
-    if(score)    setScore(score);
+  const restorescore = (score, rows, level) => {
+    if (score)  setScore(score);
+    if (rows) setRows(rows);
     if (level) setLevel(level);
-    console.log('restoreScore in useAuth',score, level);
+    
+    console.log('restoreScore in useAuth', score, rows, level);
     //TODO почему не обновляется счетчик из хука SetScore
   };
  

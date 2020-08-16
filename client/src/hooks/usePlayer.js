@@ -8,8 +8,8 @@ import { STAGE_WIDTH, checkCollision } from '../gameHelpers';
 export const usePlayer = () => {
   const [player, setPlayer] = useState({
     pos: { x: 0, y: 0 },
-    tetromino: TETROMINOS[0].shape,
-    //tetromino: randomTetromino(),
+    tetromino: TETROMINOS[0].shape, //current Figure
+    tetrominoNext: randomTetromino(),//next
     collided: false,
   });
  
@@ -49,14 +49,41 @@ export const usePlayer = () => {
   };
 
  
-
+//выдача новой фигуры
   const resetPlayer = useCallback(() => {
-    setPlayer({
+   
+    console.log('resetPlayer player.tet ', player.tetromino);
+    console.log('resetPlayer player.next', player.tetrominoNext);
+    
+  
+    setPlayer(prev =>{ return {
       pos: { x: STAGE_WIDTH / 2 - 2, y: 0 },
-      tetromino: randomTetromino(),
+      tetromino: prev.tetrominoNext,
+      tetrominoNext: randomTetromino(),
       collided: false,
-    })
+    }});
   }, []);
-
+//выдача новой фигуры
+// const resetPlayer = () => {
+    
+//   console.log('resetPlayer ', player.tetromino);
+//   setPlayer( {
+//     pos: { x: STAGE_WIDTH / 2 - 2, y: 0 },
+//     tetromino: player.tetrominoNext,
+//     tetrominoNext: randomTetromino(),
+//     collided: false,
+//   });
+// };
+// function deepClone(obj) {
+//   const clObj = {};
+//   for(const i in obj) {
+//     if (obj[i] instanceof Object) {
+//       clObj[i] = deepClone(obj[i]);
+//       continue;
+//     }
+//     clObj[i] = obj[i];
+//   }
+//   return clObj;
+// }
   return [player, updatePlayerPos, resetPlayer, playerRotate];
 };

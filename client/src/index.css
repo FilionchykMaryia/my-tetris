@@ -11,3 +11,10 @@ html { overflow:  hidden; }
   font-family: 'Pixel';
   src: url('font/Pixel-LCD-7.woff') format('woff');
 }
+
+.overlay{
+  position: fixed;
+  width: 100vw;
+  height: 100vh;
+  z-index: 10;
+}

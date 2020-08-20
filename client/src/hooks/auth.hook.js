@@ -1,16 +1,22 @@
 import { useState, useCallback, useEffect } from 'react';
-
+import { useGameStatus } from '../hooks/useGameStatus';
 
 const storageName = 'userData';
 
 export const useAuth = () => {
     const [token, setToken] = useState(null);
     const [userId, setUserid] = useState(null);
-  
+    const [userName, setUserName] = useState(null);
+    const [score, setScore, rows, setRows, level, setLevel, maxScore, setMaxScore] = useGameStatus();
 
-    const login =(jwtToken, id, score, rows, level, maxScore, dateMaxScore) => {
+    const login =(jwtToken, id, score, rows, level, maxScore, userName) => {
         setToken(jwtToken);
         setUserid(id);
+         setScore(score);
+        setRows(rows);
+        setLevel(level);
+         setUserName(userName);
+        
         
         localStorage.setItem(storageName, JSON.stringify({
             userId: id,
@@ -19,7 +25,7 @@ export const useAuth = () => {
             rows: rows,
             level: level,
             maxScore: maxScore,
-            dateMaxScore: dateMaxScore,
+            userName: userName,
         }));
     };
 
@@ -33,7 +39,7 @@ export const useAuth = () => {
         const data = JSON.parse(localStorage.getItem(storageName));
     console.log('data from UseEffect login',data);
         if(data && data.token) {
-            login(data.token, data.userId,data.score, data.rows, data.level, data.maxScore, data.dateMaxScore);
+            login(data.token, data.userId,data.score, data.rows, data.level, data.maxScore, data.userName);
            // restorescore(data.score, data.level);
         }
     }, [login]);
@@ -41,5 +47,5 @@ export const useAuth = () => {
     
  
 
-    return { login, logout, token, userId }
+    return { login, logout, token, userId, userName }
 }

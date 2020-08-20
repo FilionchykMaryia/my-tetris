@@ -15,7 +15,7 @@ import {
 import {useHttp} from './../hooks/http.hook';
 import {useMessage} from './../hooks/message.hook';
 import { AuthContext } from '../context/AuthContext';
-
+const storageName = 'userData';
 export const AuthPage = () => {
     const auth = useContext(AuthContext);
     const message = useMessage();
@@ -55,12 +55,21 @@ export const AuthPage = () => {
       try{
           const data = await request('/api/auth/login', 'POST', {...form});
           console.log('From loginHandler Data=', data);
-          auth.login(data.token, data.userId, data.currScore, data.currRows, data.currLevel);
+         if(data && data.token) localStorage.setItem(storageName, JSON.stringify({
+            userId: data.userId,
+            token: data.token,
+            score: data.currScore,
+            rows:  data.currRows,
+            level: data.currLevel,
+            maxScore: data.maxScore,
+            userName:  data.userName,
+        }));
+          auth.login(data.token, data.userId, data.currScore, data.currRows, data.currLevel, data.maxScore, data.userName);
          // auth.restorescore(data.currScore, data.currLevel);
          
       } catch(e){}
   };
-console.log(form);
+// console.log(form);
     return (
     <StyledAuthPage>
       <Wrapper>

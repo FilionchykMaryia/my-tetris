@@ -1,10 +1,15 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useContext } from 'react';
+import { AuthContext } from '../context/AuthContext';
+import {useHttp} from './../hooks/http.hook';
+import { useAuth } from '../hooks/auth.hook';
 
 export const useGameStatus = (rowsCleared, login) => {
- 
+  
   const [score, setScore] = useState(0);
   const [rows, setRows] = useState(0);
   const [level, setLevel] = useState(0);
+  const [maxScore, setMaxScore] = useState(0);
+  
 
   const linePoints = [40, 100, 300, 1200];
   const storageName = 'userData';
@@ -20,14 +25,18 @@ export const useGameStatus = (rowsCleared, login) => {
 
   useEffect(() => {
     if(rowsCleared) calcScore();
+    if (score > maxScore) setMaxScore(score);
   }, [calcScore, rowsCleared, score]);
 
-  const restorescore = (score, rows, level) => {
+  
+
+  const restorescore = (score, rows, level, maxScore) => {
     if (score)  setScore(score);
     if (rows) setRows(rows);
     if (level) setLevel(level);
+    if (maxScore) setMaxScore(maxScore);
     
-    console.log('restoreScore in useAuth', score, rows, level);
+    console.log('restoreScore in useAuth', score, rows, level, maxScore);
     //TODO почему не обновляется счетчик из хука SetScore
   };
  
@@ -40,5 +49,5 @@ export const useGameStatus = (rowsCleared, login) => {
   //   }
   // },[login]);
 
-  return [score, setScore, rows, setRows, level, setLevel, restorescore];
+  return [score, setScore, rows, setRows, level, setLevel, restorescore, maxScore, setMaxScore];
 };

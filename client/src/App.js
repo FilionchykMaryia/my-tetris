@@ -8,13 +8,13 @@ import 'materialize-css';
 import {useGameStatus} from './hooks/useGameStatus';
 
 const App = () => {
-  const {token, login, logout, userId} = useAuth();
-  const [score, level] = useGameStatus(); 
+  const {token, login, logout, userId, userName} = useAuth();
+  const [score, rows, level, maxScore] = useGameStatus(); 
   const isAuthenticated = !!token;
   const routes = useRoutes(isAuthenticated);
   return(
     <AuthContext.Provider value={{
-      token, userId, score,level, login, logout,  isAuthenticated
+      token, userId, score, rows, level, maxScore, userName, login, logout,  isAuthenticated
     }}>
       <Router>
       

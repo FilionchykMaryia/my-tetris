@@ -12,7 +12,7 @@ export const useRoutes = isAuthenticated => {
                     <GamePage />
                 </Route>
 
-                <Route path="/detail/:id">
+                <Route path="/details">
                     <DetailPage />
                 </Route> 
 
@@ -30,3 +30,4 @@ export const useRoutes = isAuthenticated => {
         </Switch>
     )
 }
+

@@ -35,10 +35,10 @@ export const Tetris = () => {
   const auth = useContext(AuthContext);
   const message = useMessage();
   const {request} = useHttp();
-  debugger;
+  
   const [player, updatePlayerPos, resetPlayer, playerRotate] = usePlayer();
   const [stage, setStage, rowsCleared] = useStage(player, resetPlayer);
-  const [score, setScore, rows, setRows, level, setLevel, restorescore] = useGameStatus(rowsCleared);
+  const [score, setScore, rows, setRows, level, setLevel, restorescore, maxScore, setMaxScore] = useGameStatus(rowsCleared);
   const { login, logout, token, userId } = useAuth();
 
   const [miniStage, setMiniStage] = useMiniStage(player, resetPlayer);
@@ -73,6 +73,7 @@ console.log('from Tetris Score=', score);
     setLevel(0);
     setGameOver(false);
     setPlaying(true);
+    
   };
 
   const continuePrevGame = () => {
@@ -112,6 +113,7 @@ console.log('from Tetris Score=', score);
         setGameOver(true);
         setDropTime(null);
         setActive(false);
+      
       }
       updatePlayerPos({ x: 0, y: 0, collided: true });
     }
@@ -151,26 +153,43 @@ console.log('from Tetris Score=', score);
       }
     }
   };
+  
+  const saveLocalStatusGame = () => {
+    localStorage.setItem(storageName, JSON.stringify({
+      userId: userId,
+      token: auth.token,
+      score: score,
+      rows: rows,
+      level: level,
+      maxScore: maxScore,
+      userName: auth.userName
+    }));
+  };
 
   const restoreScoreFromStorage = () => {
     const data = JSON.parse(localStorage.getItem(storageName));
     console.log('restoreScoreFromStorage',data);
         if(data && data.token) {
-     restorescore(data.score, data.rows, data.level);
+     restorescore(data.score, data.rows, data.level, data.maxScore);
   }};
 
   useEffect(() => {
     restoreScoreFromStorage();
   }, [userId]);
 
+ 
+
   const saveScoreHandler = async () => {
     try{
       console.log('send score=', score);
+      if (score > maxScore) setMaxScore(score);
       const data = await request('/api/game/savescore', 'POST', {
         userId: userId,
         score: score,
         rows: rows, 
-        level: level
+        level: level,
+        maxScore: maxScore,
+        userName: auth.userName
       }, {Authorisation: `Bearer ${auth.token}`});
       //save to storage
       localStorage.setItem(storageName, JSON.stringify({
@@ -178,7 +197,9 @@ console.log('from Tetris Score=', score);
         token: auth.token,
         score: score,
         rows: rows,
-        level: level
+        level: level,
+        maxScore: maxScore,
+        userName: auth.userName
     }));
       console.log('SAVE request=', data);
         message(data.message);
@@ -186,20 +207,41 @@ console.log('from Tetris Score=', score);
     } catch(e){}
   };
 
-  const saveLocalStatusGame = () => {
-    localStorage.setItem(storageName, JSON.stringify({
-      userId: userId,
-      token: auth.token,
-      score: score,
-      rows: rows,
-      level: level
-    }));
-  };
+  
+
+  // const gameOverHandler = async () => { 
+
+  //     if(gameOver){
+  //       setScore(0);
+  //       setRows(0);
+  //       setLevel(0);
+
+  //     };
+  //     const data = await request('/api/game/gameover', 'POST', {
+  //       userId: userId,
+  //       score: score,
+  //       rows: rows, 
+  //       level: level,
+  //       maxScore: maxScore,
+  //       userName: auth.userName
+  //     }, {Authorisation: `Bearer ${auth.token}`});
+  //     //save to storage
+  //     localStorage.setItem(storageName, JSON.stringify({
+  //       userId: userId,
+  //       token: auth.token,
+  //       score: score,
+  //       rows: rows,
+  //       level: level,
+  //       maxScore: maxScore,
+  //       userName: auth.userName
+  //       }));
+    
+  //     };
 
   const handleClickPauseButton = (e) => {
     const callback = dropTime ? pause : play;
     callback(e);
-    saveLocalStatusGame(e);
+    saveLocalStatusGame();
   };
 
   return (
@@ -210,19 +252,20 @@ console.log('from Tetris Score=', score);
         <StyledTetris>
         {(gameOver && !active) && (
 
-  <div className="overlay" onClick={(e) => setActive(true)} >
-    <ModalWindow  gameOver={gameOver} 
-                  title="Game Over" 
-                  text="Start a new game!" 
-                  style={active ? {display: 'none'} : {display: 'flex'}}/>
-  </div> 
-)}
+          <div className="overlay" onClick={(e) => setActive(true)} >
+            <ModalWindow  gameOver={gameOver} 
+                          title="Game Over" 
+                          text="Start a new game!" 
+                          style={active ? {display: 'none'} : {display: 'flex'}}/>
+          </div> 
+        )}
         <Stage stage={stage} />
         <aside>
           <Display text={`Score: ${score}`} />
           <Display text={`Rows: ${rows}`} />
           <Display text={`Level: ${level}`} />
           <Clock />
+          <DisplayForNextTetro  text='NEXT: ' miniStage={createMiniStage()} player={player}> </DisplayForNextTetro>
           <Button callback={startGame} text={'New Game (R)'}/>
 
           {!gameOver && (
@@ -234,7 +277,7 @@ console.log('from Tetris Score=', score);
                 <Button callback={handleClickPauseButton} text={dropTime ? 'Pause (P)' : 'Play (P)'} />
               ) : null}
               
-              <DisplayForNextTetro  text='NEXT' miniStage={createMiniStage()} player={player}> </DisplayForNextTetro>
+              
             </>
               
             )}
@@ -247,7 +290,3 @@ console.log('from Tetris Score=', score);
 };
 
 export default Tetris;
-//<DisplayForNextTetro text={`Next: `} miniStage={miniStage} nextPiece={figure.next}/>
-// 
-
-//       : (

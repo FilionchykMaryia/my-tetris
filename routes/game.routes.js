@@ -37,6 +37,34 @@ router.post(
     }
 );
 
+// router.post(
+//     '/gameover', 
+//         async (req, res) => {
+      
+//         try {
+//             const { userId, score, rows, level } = req.body;
+//             if(!userId)  res.status(500).json({ message: 'Не удалось определить UserID' });
+//             const user = await User.findById(userId);
+            
+//             if(user.maxScore < score){
+                
+//                 await User.findByIdAndUpdate(userId, {currScore: score, currRows: rows, currLevel: level, maxScore: score});
+                
+//             } else {
+//                 await User.findByIdAndUpdate(userId, {currScore: score, currRows: rows, currLevel: level});
+               
+//             };
+            
+//             res.json({ userId: user.id, currScore: user.currScore, currRows: user.currRows, currLevel: user.currLevel, maxScore: user.maxScore, userName: user.name });
+//             return res.status(201).json({ message: 'Результат игры успешно сохранен'});
+            
+//         } catch(e){
+//             return res.status(500).json({ message: 'Что-то пошло не так, попробуйте снова' });
+            
+//         }
+//     }
+// );
+
 router.get('/:id', auth, async (req, res) => {
     try {
         const points = await User.findById(req.params.id);  

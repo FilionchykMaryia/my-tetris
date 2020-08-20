@@ -1,10 +1,16 @@
+
 html { overflow:  hidden; }
+
+body {
+  background-image: linear-gradient(rgba(29,35,53, 0.6) 10%, rgba(17,23,41, 0.6) 80%), url('./img/background.png');
+  background-size: cover;
+  overflow: hidden;
+}
+
 #root{
   box-sizing: border-box;
   margin: 0;
   padding: 0;
- 
-
 }
 
 @font-face {

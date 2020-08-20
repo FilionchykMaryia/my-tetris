@@ -8,6 +8,8 @@ export const AuthContext = createContext({
     currScore: 0,
     currRows: 0,
     currLevel: 0,
+    maxScore: 0,
+    userName: null,
     login: noop,
     logout: noop,
     isAuthenticated: false,

@@ -5,18 +5,18 @@ const storageName = 'userData';
 
 export const useAuth = () => {
     const [token, setToken] = useState(null);
+    const [ready, setReady] = useState(false);
     const [userId, setUserid] = useState(null);
     const [userName, setUserName] = useState(null);
     const [score, setScore, rows, setRows, level, setLevel, maxScore, setMaxScore] = useGameStatus();
 
-    const login =(jwtToken, id, score, rows, level, maxScore, userName) => {
+    const login = useCallback((jwtToken, id, score, rows, level, maxScore, userName) => {
         setToken(jwtToken);
         setUserid(id);
-         setScore(score);
+        setScore(score);
         setRows(rows);
         setLevel(level);
-         setUserName(userName);
-        
+        setUserName(userName);
         
         localStorage.setItem(storageName, JSON.stringify({
             userId: id,
@@ -27,7 +27,7 @@ export const useAuth = () => {
             maxScore: maxScore,
             userName: userName,
         }));
-    };
+    }, []);
 
     const logout = useCallback(() => {
         setToken(null);
@@ -40,12 +40,13 @@ export const useAuth = () => {
     console.log('data from UseEffect login',data);
         if(data && data.token) {
             login(data.token, data.userId,data.score, data.rows, data.level, data.maxScore, data.userName);
-           // restorescore(data.score, data.level);
+           
         }
+        setReady(true);
     }, [login]);
 
     
  
 
-    return { login, logout, token, userId, userName }
+    return { login, logout, token, userId, userName, ready }
 }

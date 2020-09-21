@@ -15,9 +15,9 @@ export const usePlayer = () => {
  
 
   function rotate(matrix, dir) {
-    // Make the rows to become cols (transpose)
+    // делаем так, чтобы строки стали столбцами
     const mtrx = matrix.map((_, index) => matrix.map(column => column[index]));
-    // Reverse each row to get a rotaded matrix
+    // переворачиваем каждую строку, чтобы получить повернутую матрицу
     if (dir > 0) return mtrx.map(row => row.reverse());
     return mtrx.reverse();
   }
@@ -56,34 +56,14 @@ export const usePlayer = () => {
     console.log('resetPlayer player.next', player.tetrominoNext);
     
   
-    setPlayer(prev =>{ return {
+    setPlayer(prev => { 
+      return {
       pos: { x: STAGE_WIDTH / 2 - 2, y: 0 },
       tetromino: prev.tetrominoNext,
       tetrominoNext: randomTetromino(),
       collided: false,
     }});
   }, []);
-//выдача новой фигуры
-// const resetPlayer = () => {
-    
-//   console.log('resetPlayer ', player.tetromino);
-//   setPlayer( {
-//     pos: { x: STAGE_WIDTH / 2 - 2, y: 0 },
-//     tetromino: player.tetrominoNext,
-//     tetrominoNext: randomTetromino(),
-//     collided: false,
-//   });
-// };
-// function deepClone(obj) {
-//   const clObj = {};
-//   for(const i in obj) {
-//     if (obj[i] instanceof Object) {
-//       clObj[i] = deepClone(obj[i]);
-//       continue;
-//     }
-//     clObj[i] = obj[i];
-//   }
-//   return clObj;
-// }
+
   return [player, updatePlayerPos, resetPlayer, playerRotate];
 };

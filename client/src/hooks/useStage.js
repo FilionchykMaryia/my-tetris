@@ -19,12 +19,12 @@ export const useStage = (player, resetPlayer) => {
       }, []);
      
     const updateStage = prevStage => {
-      // First flush the stage
+      //очистка заполненной линии поля
       const newStage = prevStage.map(row =>
         row.map(cell => (cell[1] === 'clear' ? [0, 'clear'] : cell))
       );
   
-      // Then draw the tetromino
+      //затем перемещение всех тетромино после очистки
       player.tetromino.map((row, y) => {
         row.map((value, x) => {
           if (value !== 0) {
@@ -35,7 +35,7 @@ export const useStage = (player, resetPlayer) => {
           }
         });
       });
-      // Then check if we got some score if collided
+       //проверка, не столкнулись ли элементы
       if (player.collided) {
         resetPlayer();
         return sweepRows(newStage);
@@ -43,7 +43,7 @@ export const useStage = (player, resetPlayer) => {
       return newStage;
     };
 
-    // Here are the updates
+    // обновляем состояние поля
     setStage(prev => updateStage(prev));
   }, [
       player.collided,

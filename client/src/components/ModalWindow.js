@@ -1,14 +1,12 @@
-import React, {useState} from 'react';
+import React from 'react';
 import {NavLink} from 'react-router-dom';
 import Button from './Button';
 import {StyledModalWindow, WindowContent} from './styles/StyledModalWindow';
-import {CardTitle} from './../pages/styles/StyledAuthPage';
-import { useGameStatus } from '../hooks/useGameStatus';
+import {CardTitle} from './styles/StyledPage';
 
 
 const ModalWindow = ({ gameOver, title, text, style, startGame }) => (
    
-     
        <StyledModalWindow  gameOver={gameOver} style={style}>
             
             <WindowContent>
@@ -23,8 +21,5 @@ const ModalWindow = ({ gameOver, title, text, style, startGame }) => (
         </StyledModalWindow>
        
 );
-
-     
-
 
 export default ModalWindow;

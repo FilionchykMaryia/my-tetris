@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { StyledDisplay } from './styles/StyledDisplay';
+import { StyledClock } from './styles/StyledClock';
 
 export const Clock = () => {
     const [clock, setClock] = useState({
@@ -18,11 +18,11 @@ export const Clock = () => {
 
 
   return (
-    <StyledDisplay style={{flexDirection: "column"}}>
+    <StyledClock >
         <div>{clock.time}</div>
-        <br/>
+
         <div>{clock.date}</div>
-    </StyledDisplay>
+    </StyledClock>
   );
 };
 

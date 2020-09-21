@@ -1,16 +1,19 @@
 const {Router} = require('express');
 const router = Router();
-const User = require('../models/User');
+const User = require("../models/User");
 const auth = require('../middleware/auth.middleware');
 const config = require('config');
 
-// /api/details/
+// /api/rating/
 router.get('/', auth, async (req, res) => {
     try {
-        const user = await User.findOne({email});  
-        res.json(user);
-        console.log('details =', user);
-        return res.json({ token, userId: user.id, currScore: user.currScore, currRows: user.currRows, currLevel: user.currLevel, maxScore: user.maxScore, userName: user.name});
+        console.log('users =');
+        const users = await User.find().sort({maxScore: -1}).limit(5);  
+        
+        // const users = await User.find({name: 'Mary'}); 
+        res.json(users);
+        console.log('users =', users);
+        return res.status(201).json({ message: ''});
 
        
     } catch(e){

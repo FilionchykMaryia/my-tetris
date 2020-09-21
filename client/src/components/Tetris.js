@@ -2,10 +2,15 @@ import React, { useState, useEffect, useContext } from 'react';
 
 import { createStage, checkCollision } from '../gameHelpers';
 import { StyledTetrisWrapper, StyledTetris } from './styles/StyledTetris';
-import { randomTetromino } from './../tetrominos';
+import {StyledMobileNavigation,
+  LeftButton,
+  RightButton,
+  DownButton,
+  UpButton
+} from './styles/StyledMobileNavigation';
 import { AuthContext } from '../context/AuthContext';
-import {useMessage} from './../hooks/message.hook';
-import {useHttp} from './../hooks/http.hook';
+import { useMessage } from './../hooks/message.hook';
+import { useHttp } from './../hooks/http.hook';
 
 // Custom Hooks
 import { useInterval } from '../hooks/useInterval';
@@ -13,7 +18,6 @@ import { usePlayer } from '../hooks/usePlayer';
 import { useStage } from '../hooks/useStage';
 import { useGameStatus } from '../hooks/useGameStatus';
 import { useAuth } from '../hooks/auth.hook';
-import { useMiniStage } from '../hooks/useMiniStage';
 
 
 // Components
@@ -24,6 +28,9 @@ import DisplayForNextTetro from './DisplayForNextTetro';
 import Clock from './Clock';
 import ModalWindow from './ModalWindow';
 import { createMiniStage } from '../gameHelpers';
+import { Loader } from './Loader';
+
+
 
 export const Tetris = () => {
   const storageName = 'userData';
@@ -34,18 +41,13 @@ export const Tetris = () => {
   
   const auth = useContext(AuthContext);
   const message = useMessage();
-  const {request} = useHttp();
+  const {loading, request} = useHttp();
   
   const [player, updatePlayerPos, resetPlayer, playerRotate] = usePlayer();
   const [stage, setStage, rowsCleared] = useStage(player, resetPlayer);
   const [score, setScore, rows, setRows, level, setLevel, restorescore, maxScore, setMaxScore] = useGameStatus(rowsCleared);
   const { login, logout, token, userId } = useAuth();
 
-  const [miniStage, setMiniStage] = useMiniStage(player, resetPlayer);
-console.log('from Tetris Score=', score);
- console.log('from Tetris miniStage=', miniStage);
-  // console.log(tetroForDisplay);
-  // console.log(miniStage);
 
   const movePlayer = dir => {
     if (!checkCollision(player, stage, { x: dir, y: 0 })) {
@@ -55,7 +57,7 @@ console.log('from Tetris Score=', score);
 
   const keyUp = ({ keyCode }) => {
     if (!gameOver) {
-      // Activate the interval again when user releases down arrow.
+      // запуск интервала при поднятии клавиши "вниз"
       if (keyCode === 40) {
         setDropTime(1000 / (level + 1));
       }
@@ -63,11 +65,10 @@ console.log('from Tetris Score=', score);
   };
 
   const startGame = () => {
-    // Reset everything
+    // сброс всех значений
     setStage(createStage());
     setDropTime(1000);
     resetPlayer();
-   // setMiniStage();
     setScore(0);
     setRows(0);
     setLevel(0);
@@ -80,7 +81,6 @@ console.log('from Tetris Score=', score);
     setStage(createStage());
     setDropTime(1000);
     resetPlayer();
-  //  setMiniStage();
     setScore(score);
     setRows(rows);
     setLevel(level);
@@ -97,10 +97,10 @@ console.log('from Tetris Score=', score);
    };
 
   const drop = () => {
-    // Increase level when player has cleared 10 rows
+    // повышение уровня при очистке 10 строк
     if (rows > (level + 1) * 10) {
       setLevel(prev => prev + 1);
-      // Also increase speed
+      // Также увеличиваем скорость
       setDropTime(1000 / (level + 1) + 200);
     }
 
@@ -120,14 +120,12 @@ console.log('from Tetris Score=', score);
   };
 
   const dropPlayer = () => {
-    // We don't need to run the interval when we use the arrow down to
-    // move the tetromino downwards. So deactivate it for now.
+    // отключаем интервал при нажатии кнопки "вниз"
     setDropTime(null);
     drop();
   };
 
-  // This one starts the game
-  // Custom hook by Dan Abramov
+  //в начале игры запускаем интервал
   useInterval(() => {
     drop();
   }, dropTime);
@@ -154,6 +152,14 @@ console.log('from Tetris Score=', score);
     }
   };
   
+const left = () => movePlayer(-1);
+const right = () => movePlayer(1);
+const rotate = () => playerRotate(stage, 1);
+const down = () => {
+  dropPlayer();
+  setDropTime(1000 / (level + 1));
+}
+
   const saveLocalStatusGame = () => {
     localStorage.setItem(storageName, JSON.stringify({
       userId: userId,
@@ -207,41 +213,15 @@ console.log('from Tetris Score=', score);
     } catch(e){}
   };
 
-  
-
-  // const gameOverHandler = async () => { 
-
-  //     if(gameOver){
-  //       setScore(0);
-  //       setRows(0);
-  //       setLevel(0);
-
-  //     };
-  //     const data = await request('/api/game/gameover', 'POST', {
-  //       userId: userId,
-  //       score: score,
-  //       rows: rows, 
-  //       level: level,
-  //       maxScore: maxScore,
-  //       userName: auth.userName
-  //     }, {Authorisation: `Bearer ${auth.token}`});
-  //     //save to storage
-  //     localStorage.setItem(storageName, JSON.stringify({
-  //       userId: userId,
-  //       token: auth.token,
-  //       score: score,
-  //       rows: rows,
-  //       level: level,
-  //       maxScore: maxScore,
-  //       userName: auth.userName
-  //       }));
-    
-  //     };
 
   const handleClickPauseButton = (e) => {
     const callback = dropTime ? pause : play;
     callback(e);
     saveLocalStatusGame();
+  };
+
+  if (loading) {
+    return <Loader />
   };
 
   return (
@@ -260,6 +240,7 @@ console.log('from Tetris Score=', score);
           </div> 
         )}
         <Stage stage={stage} />
+
         <aside>
           <Display text={`Score: ${score}`} />
           <Display text={`Rows: ${rows}`} />
@@ -267,7 +248,7 @@ console.log('from Tetris Score=', score);
           <Clock />
           <DisplayForNextTetro  text='NEXT: ' miniStage={createMiniStage()} player={player}> </DisplayForNextTetro>
           <Button callback={startGame} text={'New Game (R)'}/>
-
+        
           {!gameOver && (
             <>
               <Button callback={continuePrevGame} text={'Continue (C)'}/>
@@ -276,13 +257,19 @@ console.log('from Tetris Score=', score);
               {isPlaying ? (
                 <Button callback={handleClickPauseButton} text={dropTime ? 'Pause (P)' : 'Play (P)'} />
               ) : null}
-              
-              
+  
             </>
               
             )}
-          
+          <StyledMobileNavigation>
+            <Button callback={left} text={'LEFT'} />
+            <Button callback={right} text={'RIGHT'} />
+            <Button callback={down} text={'DOWN'} />
+            <Button callback={rotate} text={'UP'} />
+          </StyledMobileNavigation>
         </aside>
+        
+
       </StyledTetris> 
   
     </StyledTetrisWrapper>

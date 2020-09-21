@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-
+import device from './device';
 
 export const StyledNavbar = styled.div`
     box-sizing: border-box;
@@ -17,12 +17,27 @@ export const StyledNavbar = styled.div`
     background-size: cover;
     overflow: hidden;
     padding: 15px;
-    
+    @media ${device.mobileS} {
+        justify-content: space-around;
+
+    };
+    @media ${device.tablet} {
+        justify-content: space-between;
+    };
+
 `;
 
 export const Logo = styled.span`
     color: white;
     font-size: 2rem;
+
+    @media ${device.mobileS} {
+        display: none;
+    };
+    @media ${device.tablet} {
+        display: block;
+    };
+
 `;
 
 export const Ul = styled.ul`
@@ -41,5 +56,4 @@ export const Li = styled.li`
             
         }
  
-    
 `;

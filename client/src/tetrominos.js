@@ -32,4 +32,3 @@ export const randomTetromino = () => {
 // 149,79,177 purple
 // 255,122,60 orange
 
-// export let tetroBuff=nextTetromino();

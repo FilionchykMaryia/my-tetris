@@ -3,6 +3,7 @@ import {Switch, Route, Redirect} from 'react-router-dom';
 import { DetailPage } from './pages/DetailPage';
 import { GamePage } from './pages/GamePage';
 import { AuthPage } from './pages/AuthPage';
+import { RatingPage } from './pages/RatingPage';
 
 export const useRoutes = isAuthenticated => {
     if(isAuthenticated){
@@ -14,6 +15,10 @@ export const useRoutes = isAuthenticated => {
 
                 <Route path="/details">
                     <DetailPage />
+                </Route> 
+
+                <Route path="/rating">
+                    <RatingPage />
                 </Route> 
 
                 <Redirect to="/game"/>

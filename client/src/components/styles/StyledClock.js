@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import device from './device';
 
-export const StyledDisplay = styled.div`
+export const StyledClock = styled.div`
     box-sizing: border-box;
     display: flex;
     flex-direction: row;
@@ -15,7 +15,6 @@ export const StyledDisplay = styled.div`
     min-height: 15px;
     min-width: 30px;
     width: 100%;
-    height: auto;
     /* border-radius: 10px; */
     color: ${props => (props.gameOver ? 'red' : '#999')};
     background: rgba(0,5,23,0.9);
@@ -25,18 +24,17 @@ export const StyledDisplay = styled.div`
     flex: 0 0 auto;
 
     @media ${device.mobileS} {
-      height: auto;
-      padding: 3px;
-      font-size: 0.3rem;
-      margin: 0 0 3px 0;
-    };
+        height: 15px;
+        padding: 3px;
+        font-size: 0.3rem;
+        };
     @media ${device.tablet} {
-      width: 100%;
-      min-height: 20px;
-      margin: 0 0 5px 0;
-      padding: 1rem;
-      font-size: 0.7rem;
+        height: 45px;
+        min-height: 25px;
+        min-width: 30px;
+        padding: 1rem;
+        font-size: 0.7rem;
+        margin: 0 0 5px 0;
     };
 
 `;
- 

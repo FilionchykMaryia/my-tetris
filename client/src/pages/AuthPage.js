@@ -1,17 +1,16 @@
 import React, {useContext, useState, useEffect} from 'react';
 import {StyledButton} from './../components/styles/StyledButton';
 import {
-    StyledAuthPage, 
+    StyledPage, 
     Wrapper,
     Title,
     Card,
     CardContent,
-    CardTitle,
     InputField, 
     Input,
     Label,
     CardAction
-} from './../pages/styles/StyledAuthPage';
+} from '../components/styles/StyledPage';
 import {useHttp} from './../hooks/http.hook';
 import {useMessage} from './../hooks/message.hook';
 import { AuthContext } from '../context/AuthContext';
@@ -71,14 +70,14 @@ export const AuthPage = () => {
   };
 // console.log(form);
     return (
-    <StyledAuthPage>
+    <StyledPage>
       <Wrapper>
         <Title>Tetris</Title>
         <Card>
 
           <CardAction>
-            <StyledButton name={'LogIn'} onClick={handleClickActiveTab}>LogIn</StyledButton>
-            <StyledButton name={'Sign Up'} onClick={handleClickActiveTab}>Sign Up</StyledButton>
+            <StyledButton name={'LogIn'} onClick={handleClickActiveTab} style={{background:" rgba(30, 58, 142, 0.2)"}}>Log In</StyledButton>
+            <StyledButton name={'Sign Up'} onClick={handleClickActiveTab} style={{background:" rgba(30, 58, 142, 0.2)"}}>Sign Up</StyledButton>
           </CardAction>
       
           <CardContent>
@@ -87,7 +86,7 @@ export const AuthPage = () => {
                 <InputField>
                   <Label htmlFor="email">Email</Label>
                   <Input
-                    placeholder="Введите email"
+                    placeholder="Your email"
                     id="email"
                     type="text"
                     name="email"
@@ -97,9 +96,9 @@ export const AuthPage = () => {
                 </InputField>
 
                 <InputField>
-                  <Label htmlFor="password">Пароль</Label>
+                  <Label htmlFor="password">Password</Label>
                   <Input
-                    placeholder="Введите пароль"
+                    placeholder="Your password"
                     id="password"
                     type="password"
                     name="password"
@@ -108,8 +107,8 @@ export const AuthPage = () => {
                   />
                   </InputField>
 
-                <StyledButton style={{margin:'10px'}} onClick={loginHandler} disabled={loading}>
-                  Войти
+                <StyledButton style={{margin:'10px', padding: '15px'}} onClick={loginHandler} disabled={loading}>
+                Log In
                 </StyledButton>
               </div>
             ) : (
@@ -117,7 +116,7 @@ export const AuthPage = () => {
                 <InputField>
                   <Label htmlFor="email">Email</Label>
                   <Input
-                    placeholder="Введите email"
+                    placeholder="Your email"
                     id="email"
                     type="text"
                     name="email"
@@ -127,9 +126,9 @@ export const AuthPage = () => {
                 </InputField>
 
                 <InputField>
-                  <Label htmlFor="password">Пароль</Label>
+                  <Label htmlFor="password">Password</Label>
                   <Input
-                    placeholder="Введите пароль"
+                    placeholder="Your password"
                     id="password"
                     type="password"
                     name="password"
@@ -138,9 +137,9 @@ export const AuthPage = () => {
                   />
                 </InputField>
                 <InputField>
-                    <Label htmlFor="name">Имя</Label>
+                    <Label htmlFor="name">Name</Label>
                     <Input
-                      placeholder="Введите ваше имя"
+                      placeholder="Your name"
                       id="name"
                       type="text"
                       name="name"
@@ -148,14 +147,14 @@ export const AuthPage = () => {
                     />
                 </InputField>
 
-              <StyledButton style={{margin: '10px'}} onClick={registerHandler} disabled={loading}>
-                Регистрация
+              <StyledButton style={{margin: '10px', padding: '15px'}} onClick={registerHandler} disabled={loading}>
+              Sign Up
               </StyledButton>
             </div>
             )}
           </CardContent> 
         </Card>
       </Wrapper>
-    </StyledAuthPage>
+    </StyledPage>
     )
 };

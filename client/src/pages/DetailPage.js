@@ -1,30 +1,23 @@
-import React, {useContext, useState, useEffect, useCallback} from 'react';
+import React, {useContext, useEffect} from 'react';
 import {useParams} from 'react-router-dom';
-import {StyledButton} from './../components/styles/StyledButton';
 import {
-    StyledAuthPage, 
+    StyledPage,
     Wrapper,
     Title,
-    Card,
-    CardContent,
-    CardTitle,
-    InputField, 
-    Input,
-    Label,
-    CardAction
-} from './../pages/styles/StyledAuthPage';
+    Card 
+} from '../components/styles/StyledPage';
 import {useHttp} from './../hooks/http.hook';
 import {useMessage} from './../hooks/message.hook';
 import { AuthContext } from '../context/AuthContext';
 import { useGameStatus } from '../hooks/useGameStatus';
 
 export const DetailPage = () => {
-    const {token} = useContext(AuthContext);
+    // const {token} = useContext(AuthContext);
     const auth = useContext(AuthContext);
     const message = useMessage();
-    const {loading, request} = useHttp();
+    const {request} = useHttp();
     const userId = useParams().id;
-    const [score, rows, level, maxScore, setMaxScore] = useGameStatus();
+    const [score, rows, level, maxScore] = useGameStatus();
     const storageName = 'userData';
 
     useEffect(() => {
@@ -42,7 +35,7 @@ export const DetailPage = () => {
             level: level,
             maxScore: maxScore,
             userName: auth.userName
-            }, {Authorisation: `Bearer ${auth.token}`});
+            }, {Authorization: `Bearer ${auth.token}`});
             //save to storage
             localStorage.setItem(storageName, JSON.stringify({
             userId: userId,
@@ -60,31 +53,33 @@ export const DetailPage = () => {
     console.log('DETAIL request=', details);
 
     return (
-        <Wrapper>
-            <Title>DetailPage</Title>
-            <Card>
-                <table>
-                <thead>
-                <tr>
-                    <th>Name</th>
-                    <th>Current Score</th>
-                    <th>Cleared Rows</th>
-                    <th>Current Level</th>
-                    <th>Max Score</th>
-                </tr>
-                </thead>
-
-                <tbody>
+        <StyledPage>
+            <Wrapper>
+                <Title>Detail Page</Title>
+                <Card>
+                    <table>
+                    <thead>
                     <tr>
-                        <td>{details.userName}</td>
-                        <td>{details.score}</td>
-                        <td>{details.rows}</td>
-                        <td>{details.level}</td>
-                        <td>{details.maxScore}</td>
-                    </tr>       
-                </tbody>
-                </table>
-            </Card>
-        </Wrapper>
+                        <th>Name</th>
+                        <th>Current <br/>Score</th>
+                        <th>Cleared <br/>Rows</th>
+                        <th>Current<br/> Level</th>
+                        <th>Max <br/>Score</th>
+                    </tr>
+                    </thead>
+
+                    <tbody style={{color: "rgb(52,104,237)"}}>
+                        <tr>
+                            <td>{details.userName}</td>
+                            <td>{details.score}</td>
+                            <td>{details.rows}</td>
+                            <td>{details.level}</td>
+                            <td>{details.maxScore}</td>
+                        </tr>       
+                    </tbody>
+                    </table>
+                </Card>
+            </Wrapper>
+        </StyledPage>
     )
 };

@@ -21,6 +21,7 @@ export const Navbar = () => {
             <Ul >
                 <Li><NavLink to="/game">Game</NavLink></Li>
                 <Li><NavLink to="/details">Details</NavLink></Li>
+                <Li><NavLink to="/rating">TOP</NavLink></Li>
                 <Li><a href="/" onClick={logoutHandler}>Logout</a></Li>
             </Ul>
      
